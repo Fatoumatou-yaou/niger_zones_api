@@ -16,37 +16,37 @@ RSpec.configure do |config|
   # the root example_group in your specs, e.g. describe '...', openapi_spec: 'v2/swagger.json'
   config.openapi_specs = {
     'v1/swagger.yaml' => {
-      openapi: '3.0.1',  
+      openapi: '3.0.1',
       info: {
         title: 'Niger zones API',
         version: 'v1',
         description: 'L\'API permet d\'accéder aux données géographiques du Niger, organisées en régions, départements, communes et localités/quartiers. Elle est conçue pour les développeurs souhaitant intégrer ces données dans leurs applications.
-          
+
            Limites d’utilisation :
-            - Maximum :   50 requêtes par minute par IP  
+            - Maximum :   50 requêtes par minute par IP
             - Réponse 429 (Trop de requetes) si la limite est dépassée.
 
-            Pagination  
+            Pagination
             Utilisez `page` comme paramètres de requête pour gérer la pagination :
 
               ```
               GET /api/v1/regions?page=2
               ```
 
-            Questions Fréquentes  
-              1. Comment filtrer les données ?  
+            Questions Fréquentes
+              1. Comment filtrer les données ?
               Utilisez les paramètres de requête tels que `population_totale` ou `name` pour filtrer les résultats.
-            
-              2. Que faire en cas d’erreur 404 ?  
+
+              2. Que faire en cas d’erreur 404 ?
               Vérifiez si l’ID ou les paramètres fournis sont corrects.
-            
-              3. Quels formats de réponse sont pris en charge ?  
+
+              3. Quels formats de réponse sont pris en charge ?
               Toutes les réponses sont en `application/json`.',
 
           contact: {
           name: 'API Support',
           email: 'fatoumatouyaou@gmail.com'
-        },
+        }
       },
       # paths: {},
       components: {
@@ -118,7 +118,7 @@ RSpec.configure do |config|
           url: 'https://{defaultHost}',
           variables: {
             defaultHost: {
-              default: 'www.exemple.com'
+              default: 'http://localhost:3000'
             }
           }
         }

@@ -3,5 +3,4 @@ class Commune < ApplicationRecord
   has_many :localites, dependent: :destroy
 
   scope :by_name, ->(name) { where("name ILIKE ?", "%#{name}%") }
-
 end

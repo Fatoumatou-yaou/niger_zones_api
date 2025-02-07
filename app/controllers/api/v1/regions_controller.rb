@@ -1,5 +1,5 @@
-module Api 
-  module V1 
+module Api
+  module V1
     class RegionsController < ApplicationController
       def index
         regions = Region.includes(departments: :communes).all
@@ -13,18 +13,18 @@ module Api
         }
         render json: response.as_json
       end
-      
+
       def show
         begin
           region = Region.includes(departments: :communes).find(params[:id])
-          serialized_region = ActiveModelSerializers::SerializableResource.new(region, include: ['departments.communes'])
+          serialized_region = ActiveModelSerializers::SerializableResource.new(region, include: [ "departments.communes" ])
           render json: serialized_region.as_json
         rescue ActiveRecord::RecordNotFound
           render json: { erreur: "Aucune région trouvée!" }, status: :not_found
         end
       end
 
-      def statistics 
+      def statistics
           region = Region.find(params[:id])
 
           statistics = {
@@ -38,23 +38,23 @@ module Api
               total_localites: region.localites.count
           }
 
-          render json: { region: region.name, statistics: statistics}
+          render json: { region: region.name, statistics: statistics }
       end
 
       def search
           regions = Region.all
           regions = Region.joins(departments: { communes: :localites })
-                          .select('regions.*, SUM(localites.population_totale) AS population')
-                          .group('regions.id')
-        
+                          .select("regions.*, SUM(localites.population_totale) AS population")
+                          .group("regions.id")
+
           if params[:name].present?
             regions = regions.where("regions.name ILIKE ?", "%#{params[:name]}%")
           end
-        
+
           if params[:population_totale].present?
-            regions = regions.having('SUM(localites.population_totale) >= ?', params[:population_totale].to_i)
+            regions = regions.having("SUM(localites.population_totale) >= ?", params[:population_totale].to_i)
           end
-        
+
           if regions.empty?
             render json: { erreur: "Aucune région ne correspond aux critères" }, status: :not_found
           else

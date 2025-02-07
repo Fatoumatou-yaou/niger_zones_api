@@ -11,10 +11,10 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
 
     resource "*",
       headers: :any,
-      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+      methods: [ :get, :post, :put, :patch, :delete, :options, :head ]
 
-      ActiveSupport::Notifications.subscribe('rack.cors') do |_name, _start, _finish, _id, payload|
-        origin = payload[:env]['HTTP_ORIGIN'] || 'unknown'
+      ActiveSupport::Notifications.subscribe("rack.cors") do |_name, _start, _finish, _id, payload|
+        origin = payload[:env]["HTTP_ORIGIN"] || "unknown"
         Rails.logger.info("[CORS] API accessed from Origin: #{origin}")
       end
   end
