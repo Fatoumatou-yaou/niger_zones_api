@@ -1,0 +1,1150 @@
+---
+openapi: 3.0.1
+info:
+  title: Niger zones API
+  version: v1
+  description: "L'API permet d'accéder aux données géographiques du Niger, organisées
+    en régions, départements, communes et localités/quartiers. Elle est conçue pour
+    les développeurs souhaitant intégrer ces données dans leurs applications.\n          \n
+    \          Limites d’utilisation :\n            - Maximum :   50 requêtes par
+    minute par IP  \n            - Réponse 429 (Trop de requetes) si la limite est
+    dépassée.\n\n            Pagination  \n            Utilisez `page` comme paramètres
+    de requête pour gérer la pagination :\n\n              ```\n              GET
+    /api/v1/regions?page=2\n              ```\n\n            Questions Fréquentes
+    \ \n              1. Comment filtrer les données?  \n              Utilisez les
+    paramètres de requête tels que `population_totale` ou `name` pour filtrer les
+    résultats.\n            \n              2. Que faire en cas d’erreur 404?  \n
+    \             Vérifiez si l’ID ou les paramètres fournis sont corrects.\n            \n
+    \             3. Quels formats de réponse sont pris en charge?  \n              Toutes
+    les réponses sont en `application/json`."
+  contact:
+    name: API Support
+    email: fatoumatouyaou@gmail.com
+components:
+  responses:
+    NotFound:
+      description: Ressource introuvable.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Ressource introuvable.
+    InternalServerError:
+      description: Erreur interne du serveur.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Erreur interne inattendue.
+    TooManyRequests:
+      description: Trop de requêtes.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Trop de requêtes. Réessayez plus tard.
+  schemas:
+    Region:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        region_code:
+          type: string
+      required:
+      - id
+      - name
+    Department:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        department_code:
+          type: integer
+      required:
+      - id
+      - name
+    Commune:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        commune_code:
+          type: string
+      required:
+      - id
+      - name
+    Localite:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        localite_code:
+          type: string
+        localite_num:
+          type: string
+        typelocalite:
+          type: integer
+        milieu:
+          type: integer
+        homme:
+          type: integer
+        femme:
+          type: integer
+        population_totale:
+          type: integer
+        menage:
+          type: integer
+        menageagricole:
+          type: integer
+        long_degre:
+          type: number
+          format: float
+        lat_degre:
+          type: number
+          format: float
+      required:
+      - id
+      - name
+      - localite_code
+    Statistics:
+      type: object
+      properties:
+        population_totale:
+          type: integer
+        total_hommes:
+          type: integer
+        total_femmes:
+          type: integer
+        total_menages:
+          type: integer
+        total_menageagricole:
+          type: integer
+        total_departments:
+          type: integer
+        total_communes:
+          type: integer
+        total_localites:
+          type: integer
+      required:
+      - population_totale
+      - total_hommes
+      - total_femmes
+      - total_menages
+      - total_menageagricole
+      - total_departments
+      - total_communes
+      - total_localites
+paths:
+  "/api/v1/regions/{region_id}/departments/{department_id}/communes":
+    get:
+      summary: Recuperer toutes les communes
+      tags:
+      - Communes
+      parameters:
+      - name: region_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: department_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Communes recuperees avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  communes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        localities:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              name:
+                                type: string
+                              localite_code:
+                                type: string
+                              localite_num:
+                                type: string
+                              typelocalite:
+                                type: integer
+                              milieu:
+                                type: integer
+                              homme:
+                                type: integer
+                              femme:
+                                type: integer
+                              population_totale:
+                                type: integer
+                              menage:
+                                type: integer
+                              menageagricole:
+                                type: integer
+                              long_degre:
+                                type: number
+                                format: float
+                              lat_degre:
+                                type: number
+                                format: float
+                            required:
+                            - id
+                            - name
+                            - commune_id
+                      required:
+                      - id
+                      - name
+                      - department_id
+                      - localities
+  "/api/v1/regions/{region_id}/departments":
+    get:
+      summary: Récupérer tous les départements d’une région
+      tags:
+      - Departments
+      description: Récupère une liste de tous les départements associés à une région
+        spécifique, avec leurs détails et leurs communes associées.
+      parameters:
+      - name: region_id
+        in: path
+        required: true
+        description: ID de la région
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Départements récupérés avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  departments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        department_code:
+                          type: integer
+                        communes:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              name:
+                                type: string
+                              commune_code:
+                                type: integer
+                            required:
+                            - id
+                            - name
+                            - commune_code
+                      required:
+                      - id
+                      - name
+                      - department_code
+                      - communes
+        '404':
+          description: Ressource introuvable
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+  "/api/v1/regions/{region_id}/departments/{id}":
+    get:
+      summary: Récupérer les détails d’un département
+      tags:
+      - Departments
+      description: Permet de récupérer les détails d’un département spécifique en
+        utilisant son ID, y compris les communes associées.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID du département
+        schema:
+          type: integer
+      - name: region_id
+        in: path
+        required: true
+        description: ID de la région
+        schema:
+          type: integer
+      responses:
+        description: ID du département
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Détails du département retournés avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  department_code:
+                    type: integer
+                  communes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        commune_code:
+                          type: integer
+                required:
+                - id
+                - name
+                - department_code
+                - communes
+        '404':
+          description: Ressource introuvable
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+  "/api/v1/departments/{id}/statistics":
+    get:
+      summary: Récupérer les statistiques pour un département spécifique
+      tags:
+      - Departments
+      description: Permet de récupérer les statistiques associées à un département
+        spécifique en utilisant son ID.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID du département
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Statistiques du département retournées avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  statistics:
+                    type: object
+                    properties:
+                      population_totale:
+                        type: integer
+                      total_hommes:
+                        type: integer
+                      total_femmes:
+                        type: integer
+                      total_menages:
+                        type: integer
+                      total_menageagricole:
+                        type: integer
+                      total_communes:
+                        type: integer
+                      total_localites:
+                        type: integer
+                    required:
+                    - population
+                    - total_hommes
+                    - total_femmes
+                    - total_menages
+                    - total_menageagricole
+                    - total_communes
+                    - total_localites
+                required:
+                - id
+                - name
+                - statistics
+        '404':
+          description: Ressource introuvable
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+  "/api/v1/departments/{department_id}/localites":
+    get:
+      summary: Lister les localités d’un département spécifique
+      tags:
+      - Localités
+      description: Récupère une liste de toutes les localités associées à un département
+        spécifique, en utilisant son ID.
+      parameters:
+      - name: department_id
+        in: path
+        required: true
+        description: ID du département
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Localités récupérées avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  localites:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        localite_code:
+                          type: string
+                        localite_num:
+                          type: string
+                        typelocalite:
+                          type: integer
+                        milieu:
+                          type: integer
+                        homme:
+                          type: integer
+                        femme:
+                          type: integer
+                        population_totale:
+                          type: integer
+                        menage:
+                          type: integer
+                        menageagricole:
+                          type: integer
+                        long_degre:
+                          type: number
+                          format: float
+                        lat_degre:
+                          type: number
+                          format: float
+                      required:
+                      - id
+                      - name
+                      - localite_code
+                      - population
+        '404':
+          description: Ressource introuvable
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+  "/api/v1/search/localites":
+    get:
+      summary: Recherche des localités avec filtres
+      tags:
+        - Localités
+      description: Permet de rechercher des localités en appliquant des filtres comme le nom, la population totale et d'autres critères.
+      parameters:
+        - name: name
+          in: query
+          description: Filtrer par nom de localité
+          schema:
+            type: string
+        - name: population_totale
+          in: query
+          description: Filtrer par population totale minimale
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Localités filtrées retournées avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        population_totale:
+                          type: integer
+                        commune:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                  meta:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      per_page:
+                        type: integer
+                required:
+                  - data
+                  - meta
+        '404':
+          description: Aucune localité trouvée avec ces critères
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+
+  "/api/v1/regions/{region_id}/departments/{department_id}/communes/{commune_id}/localites":
+    get:
+      summary: Récupérer toutes les localités d’une commune
+      tags:
+      - Localités
+      description: Permet de récupérer toutes les localités associées à une commune
+        spécifique.
+      parameters:
+      - name: region_id
+        in: path
+        required: true
+        description: ID de la région
+        schema:
+          type: integer
+      - name: department_id
+        in: path
+        required: true
+        description: ID du département
+        schema:
+          type: integer
+      - name: commune_id
+        in: path
+        required: true
+        description: ID de la commune
+        schema:
+          type: integer
+      - name: name
+        in: query
+        description: Nom de la localité ou du quartier
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Localités récupérées avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  localities:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        localite_code:
+                          type: string
+                        localite_num:
+                          type: string
+                        typelocalite:
+                          type: integer
+                        milieu:
+                          type: integer
+                        homme:
+                          type: integer
+                        femme:
+                          type: integer
+                        population_totale:
+                          type: integer
+                        menage:
+                          type: integer
+                        menageagricole:
+                          type: integer
+                        long_degre:
+                          type: number
+                          format: float
+                        lat_degre:
+                          type: number
+                          format: float
+                      required:
+                      - id
+                      - name
+                      - commune_id
+        '404':
+          description: Ressource introuvable
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+  "/api/v1/search/communes":
+    get:
+      summary: Recherche des communes avec filtres
+      tags:
+        - Communes
+      description: Permet de rechercher des communes en appliquant des filtres comme le nom, la population totale et d'autres critères.
+      parameters:
+        - name: name
+          in: query
+          description: Filtrer par nom de commune
+          schema:
+            type: string
+        - name: population_totale
+          in: query
+          description: Filtrer par population totale minimale
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Communes filtrées retournées avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        population_totale:
+                          type: integer
+                        department:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                  meta:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      per_page:
+                        type: integer
+                required:
+                  - data
+                  - meta
+        '404':
+          description: Aucune commune trouvée avec ces critères
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+  "/api/v1/search/departments":
+    get:
+      summary: Recherche des départements avec filtres
+      tags:
+        - Departments
+      description: Permet de rechercher des départements en appliquant des filtres comme le nom ou la population totale.
+      parameters:
+        - name: name
+          in: query
+          description: Filtrer par nom de département
+          schema:
+            type: string
+        - name: population_totale
+          in: query
+          description: Filtrer par population totale minimale
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Départements filtrés retournés avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        population_totale:
+                          type: integer
+                        region:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                  meta:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      per_page:
+                        type: integer
+                required:
+                  - data
+                  - meta
+        '404':
+          description: Aucun département trouvé avec ces critères
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+  "/api/v1/regions/{region_id}/departments/{department_id}/communes/{commune_id}/localites/{localite_id}":
+    get:
+      summary: Récupérer une localité spécifique
+      tags:
+      - Localités
+      description: Permet de récupérer les détails d’une localité spécifique grâce
+        à son ID.
+      parameters:
+      - name: region_id
+        in: path
+        required: true
+        description: ID de la région
+        schema:
+          type: integer
+      - name: department_id
+        in: path
+        required: true
+        description: ID du département
+        schema:
+          type: integer
+      - name: commune_id
+        in: path
+        required: true
+        description: ID de la commune
+        schema:
+          type: integer
+      - name: localite_id
+        in: path
+        required: true
+        description: ID de la localité
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Localité récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  localite_code:
+                    type: string
+                  localite_num:
+                    type: string
+                  typelocalite:
+                    type: integer
+                  milieu:
+                    type: integer
+                  homme:
+                    type: integer
+                  femme:
+                    type: integer
+                  population_totale:
+                    type: integer
+                  menage:
+                    type: integer
+                  menageagricole:
+                    type: integer
+                  long_degre:
+                    type: number
+                    format: float
+                  lat_degre:
+                    type: number
+                    format: float
+                required:
+                - id
+                - name
+                - localite_code
+        '404':
+          description: Ressource introuvable
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+  "/api/v1/regions":
+    get:
+      summary: Liste toutes les régions
+      tags:
+      - Regions
+      description: Récupère une liste de toutes les régions du Niger. Chaque région
+        inclut des détails comme son nom, sa population et ses départements associés.
+      parameters:
+      - name: page
+        in: query
+        description: Numéro de page (pagination)
+        schema:
+          type: integer
+      - name: population_totale
+        in: query
+        description: Population totale de la region
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Liste des régions retournée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        region_code:
+                          type: integer
+                  meta:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      per_page:
+                        type: integer
+                required:
+                - data
+                - meta
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+  "/api/v1/regions/{id}":
+    get:
+      summary: Récupère les détails d’une région
+      tags:
+      - Regions
+      description: Permet de récupérer les détails d’une région spécifique en utilisant
+        son ID. Les informations incluent son nom, ses départements associés...
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la région
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Détails de la région retournés avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  region_code:
+                    type: integer
+                  departments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                required:
+                - id
+                - name
+                - population_totale
+                - departments
+        '404':
+          description: Ressource introuvable
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+  "/api/v1/regions/{id}/statistics":
+    get:
+      summary: Récupère les statistiques d’une région
+      tags:
+      - Regions
+      description: Retourne les statistiques spécifiques à une région, comme la population
+        totale, le nombre de menages ou d’autres indicateurs.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la région
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Statistiques de la région retournées avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  population_totale:
+                    type: integer
+                  total_hommes:
+                    type: integer
+                  total_femmes:
+                    type: integer
+                  total_menages:
+                    type: integer
+                  total_menageagricole:
+                    type: integer
+                  total_departments:
+                    type: integer
+                  total_communes:
+                    type: integer
+                  total_localites:
+                    type: integer
+                required:
+                - id
+                - name
+                - population_totale
+                - total_hommes
+                - total_femmes
+                - total_menages
+                - total_menageagricole
+                - total_departments
+                - total_communes
+                - total_localites
+        '404':
+          description: Ressource introuvable
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+  "/api/v1/search/regions":
+    get:
+      summary: Recherche des régions avec filtres
+      tags:
+      - Regions
+      description: Permet de rechercher des régions en appliquant des filtres comme
+        le nom ou des statistiques spécifiques.
+      parameters:
+      - name: name
+        in: query
+        description: Filtrer par nom de région
+        schema:
+          type: string
+      - name: population_totale
+        in: query
+        description: Filtrer par population totale minimale
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Régions filtrées retournées avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        population_totale:
+                          type: integer
+                  meta:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      per_page:
+                        type: integer
+                required:
+                - data
+                - meta
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+                        
+                        
+
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: www.exemple.com
