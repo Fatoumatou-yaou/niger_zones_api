@@ -4,5 +4,4 @@ class Department < ApplicationRecord
   has_many :localites, through: :communes
 
   scope :by_name, ->(name) { where("name ILIKE ?", "%#{name}%") }
-
 end

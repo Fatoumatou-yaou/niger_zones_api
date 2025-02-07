@@ -1,7 +1,6 @@
 require 'swagger_helper'
 
 RSpec.describe 'API V1 Regions', type: :request do
-
   # Endpoint: GET /api/v1/regions
   path '/api/v1/regions' do
     get 'Liste toutes les régions' do
@@ -115,9 +114,9 @@ RSpec.describe 'API V1 Regions', type: :request do
             total_menageagricole: { type: :integer },
             total_departments: { type: :integer },
             total_communes: { type: :integer },
-            total_localites: { type: :integer },
+            total_localites: { type: :integer }
           },
-          required: %w[id name population_totale total_hommes total_femmes total_menages 
+          required: %w[id name population_totale total_hommes total_femmes total_menages
           total_menageagricole total_departments total_communes total_localites]
 
         let(:id) { 1 }

@@ -1,4 +1,4 @@
-require 'pagy/extras/metadata' # Activer les métadonnées
+require "pagy/extras/metadata" # Activer les métadonnées
 
 # Configuration par défaut
 Pagy::DEFAULT[:items] = 20       # Nombre d'éléments par page par défaut
@@ -9,4 +9,4 @@ Pagy::DEFAULT[:max_items] = 100  # Limite du nombre d'éléments par page
 #                 { locale: 'en' },
 #                 { locale: 'es' })
 #
-Pagy::I18n.load(locale: 'fr')
+Pagy::I18n.load(locale: "fr")

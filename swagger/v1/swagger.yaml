@@ -578,7 +578,6 @@ paths:
                     type: string
                 required:
                   - error
-
   "/api/v1/regions/{region_id}/departments/{department_id}/communes/{commune_id}/localites":
     get:
       summary: Récupérer toutes les localités d’une commune
@@ -916,7 +915,7 @@ paths:
       summary: Liste toutes les régions
       tags:
       - Regions
-      description: Récupère une liste de toutes les régions du Niger. Chaque région
+      description: Récupère la liste de toutes les régions du Niger. Chaque région
         inclut des détails comme son nom, sa population et ses départements associés.
       parameters:
       - name: page
@@ -1140,11 +1139,12 @@ paths:
             application/json:
               schema:
                 type: object
-                        
+  "api/v1/regions/{region_id}/localites":
+                          
                         
 
 servers:
 - url: https://{defaultHost}
   variables:
     defaultHost:
-      default: www.exemple.com
+      default: 'http://localhost:3000'

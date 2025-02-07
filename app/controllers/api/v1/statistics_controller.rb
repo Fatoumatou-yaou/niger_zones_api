@@ -3,7 +3,7 @@ module Api
       class StatisticsController < ApplicationController
         def index
           # Utiliser le cache pour stocker les statistiques globales pendant un an
-          statistics = Rails.cache.fetch('global_statistics', expires_in: 1.year) do
+          statistics = Rails.cache.fetch("global_statistics", expires_in: 1.year) do
             {
               total_population: Localite.sum(:population_totale),
               total_menages: Localite.sum(:menage),
@@ -17,5 +17,4 @@ module Api
         end
       end
     end
-  end
-  
+end

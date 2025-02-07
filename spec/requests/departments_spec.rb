@@ -1,7 +1,6 @@
 require 'swagger_helper'
 
 RSpec.describe 'API V1 Departments', type: :request do
-
   # Endpoint: GET /api/v1/regions/{region_id}/departments
   path '/api/v1/regions/{region_id}/departments' do
     get 'Récupérer tous les départements d’une région' do
@@ -109,7 +108,6 @@ RSpec.describe 'API V1 Departments', type: :request do
       tags 'Departments'
       produces 'application/json'
       description 'Récupère la liste de tous les départements sans passer par une  région spécifique, avec leurs détails et leurs communes associées.' do
-
       response '200', 'Départements récupérés avec succès' do
         schema type: :object,
           properties: {
@@ -156,7 +154,7 @@ RSpec.describe 'API V1 Departments', type: :request do
     end
   end
 
-   # Endpoint: GET /api/v1/departments/:id/statistics
+  # Endpoint: GET /api/v1/departments/:id/statistics
   path '/api/v1/departments/{id}/statistics' do
     get 'Récupérer les statistiques pour un département spécifique' do
       tags 'Departments'
@@ -232,7 +230,7 @@ RSpec.describe 'API V1 Departments', type: :request do
                   menage: { type: :integer },
                   menageagricole: { type: :integer },
                   long_degre: { type: :number, format: :float },
-                  lat_degre: { type: :number, format: :float },
+                  lat_degre: { type: :number, format: :float }
                 },
                 required: %w[id name localite_code population]
               }
